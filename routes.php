@@ -10,4 +10,20 @@ const ROUTES = [
         "METHOD" => "home",
         "HTTP_METHODS" => "GET",
     ],
+
+    "/users" => [
+        "CONTROLLER" => "UsersController",
+        "METHOD" => "index",
+        "HTTP_METHODS" => "GET",
+    ],
+    "/api/delete/user" => [
+        "CONTROLLER" => "UsersController",
+        "METHOD" => "deleteApiUser",
+        "HTTP_METHODS" => "GET",
+    ],
+    "/api/add/user" => [
+        "CONTROLLER" => "UsersController",
+        "METHOD" => "addApiUser",
+        "HTTP_METHODS" => "POST",
+    ],
 ];
