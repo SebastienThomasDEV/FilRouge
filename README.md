@@ -45,6 +45,9 @@ DEBUG=true
 
 ## **Utilisation**
 
+### Lancer le serveur PHP et webpack en même temps
+npm run serve
+
 ### **Lancer le serveur PHP**
 Pour démarrer un serveur PHP local, utilisez la commande suivante (à exécuter depuis la racine du projet) :
 ```bash
@@ -287,3 +290,12 @@ git checkout main
 git push origin main
 
 
+12/12/2024 : intervenir sur les classes Security et Repository pour gérer un tableau de roles pour les utilisateurs
+- Ajouter une gestion du type tableaux (recupération & insertion) exclusivement pour la colonne roles de  l'entité User (voir les classes User, Security et Repository)
+! tu peut utiliser la fonction serialize de php pour convertir un tableau en chaine de caractère et unserialize vice versa
+! ou tu peut utiliser la fonction json_encode de php pour convertir un tableau en chaine de caractère et json_decode 
+
+Mise en place de serialize et unserialize dans User.php
+L'ajout d'un utilisateur fonctionne via la route /register. Pour l'instant, je n'ai testé qu'avec les roles "ROLE_USER" et "ROLE_ADMIN"
+Ajout la route logout pour pouvoir faire des tests
+Ajout de la route roleuser et roleadmin pour pouvoir tester si le contrôle des rôles fonctionne bien

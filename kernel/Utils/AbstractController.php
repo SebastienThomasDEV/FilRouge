@@ -35,23 +35,86 @@ class AbstractController
     public final function json(array $data, int $status = 200): void
     {
         try {
-            // Définit le code de statut HTTP pour la réponse (exemple : 200, 404).
-            http_response_code($status);
+            // Nettoie et prépare les données
+            $sanitizedData = $this->prepareData($data, true);
+            // Définit les en-têtes HTTP
+            $this->setHeaders($status, true);
+            // Options d'encodage JSON
+            $jsonOptions = JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES;
+            // Encode les données en JSON
+            $jsonResponse = json_encode($sanitizedData, $jsonOptions);
+            // Vérifie les erreurs d'encodage
+            if ($jsonResponse === false) {
+                throw new \RuntimeException('Impossible d\'encoder les données JSON');
+            }
+            // Envoie la réponse
+            echo $jsonResponse;
+            // Termine le script
+            exit;
 
-            // Définit l'en-tête HTTP pour indiquer que le contenu est de type JSON.
-            header('Content-Type: application/json');
-
-            // Encode les données en JSON et les envoie au client.
-            echo json_encode($data);
-
-            // Termine l'exécution du script pour éviter d'envoyer des données supplémentaires.
-            die();
-        } catch (\Exception $e) {
-            // En cas d'erreur, affiche le message d'exception et arrête le script.
-            echo $e->getMessage();
-            exit();
+        } catch (\Throwable $e) {
+            throw new \RuntimeException('Erreur lors de l\'envoi de la réponse JSON', 500, $e);
         }
     }
+
+    /**
+     * Nettoie et prépare les données pour l'encodage JSON.
+     *
+     * @param array $data Données à préparer
+     * @return array Données nettoyées et préparées
+     */
+    private function prepareData(array $data, bool $isJson = false): array
+    {
+        if (!$isJson) {
+            return array_map(function ($value) {
+                if (is_string($value)) {
+                    return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+                }
+                return $value;
+            }, $data);
+        } else {
+            return array_map(function ($value) use ($isJson) {
+                if (is_string($value)) {
+                    // Échappe les caractères spéciaux pour JSON
+                    return mb_convert_encoding($value, 'UTF-8', 'UTF-8');
+                }
+                // Gère différents types de données
+                if (is_numeric($value)) {
+                    return $value;
+                }
+                if (is_bool($value)) {
+                    return $value;
+                }
+                if (is_array($value)) {
+                    return $this->prepareData($value, $isJson);
+                }
+                return null;
+            }, $data);
+        }
+    }
+
+
+    /**
+     * Définit les en-têtes HTTP pour la réponse JSON.
+     *
+     * @param int $status Code de statut HTTP
+     */
+    private function setHeaders(int $status, bool $isJson = false): void
+    {
+        http_response_code($status);
+        if ($isJson) {
+            header('Content-Type: application/json; charset=utf-8');
+            header('X-Content-Type-Options: nosniff');
+            header('Cache-Control: no-cache, no-store, must-revalidate');
+            header('Pragma: no-cache');
+            header('Expires: 0');
+        } else {
+            header('Content-Type: text/html; charset=utf-8');
+            header('X-Content-Type-Options: nosniff');
+        }
+    }
+
+
 
     /**
      * Méthode pour afficher une vue HTML en y injectant des données dynamiques.
@@ -75,30 +138,22 @@ class AbstractController
     public final function render(string $path, array $data = [], int $status = 200): void
     {
         try {
-            // Définit le code de statut HTTP pour la réponse (exemple : 200, 404).
-            http_response_code($status);
-
-            // Définit l'en-tête HTTP pour indiquer que le contenu est de type HTML.
-            header('Content-Type: text/html');
-
-            // Extrait les clés du tableau `$data` en tant que variables disponibles dans la vue.
-            // Exemple : ['title' => 'Bienvenue'] => $title = 'Bienvenue';
-            extract($data);
-
-            // Définit le chemin complet du fichier de vue demandé.
             $view = __DIR__ . "/../../src/Views/" . $path;
-
-            // Inclut le fichier de base HTML (layout principal).
+            if (!file_exists($view)) {
+                throw new \InvalidArgumentException("Vue introuvable : {$view}");
+            }
+            // Extrait les données de la vue de manière sécurisée
+            $viewData = $this->prepareData($data);
+            extract($viewData);
+            // Définit les en-têtes HTTP
+            $this->setHeaders($status);
+            // Inclut le fichier de base HTML (layout principal)
             include __DIR__ . "/../../src/Views/base.php";
-
-            // Termine l'exécution du script pour éviter d'envoyer des données supplémentaires.
-            die();
-        } catch (\Exception $e) {
-            // En cas d'erreur, affiche le message d'exception et termine le script.
-            echo $e->getMessage();
-            die();
+        } catch (\Throwable $e) {
+            throw new \RuntimeException('Erreur lors du rendu de la vue', 500, $e);
         }
     }
+
 
     /**
      * Méthode pour rediriger l'utilisateur vers une autre URL.
@@ -121,5 +176,6 @@ class AbstractController
     {
         // Définit l'en-tête HTTP pour rediriger l'utilisateur vers une autre URL.
         header('Location: ' . $route);
+        exit();
     }
 }

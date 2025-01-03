@@ -16,7 +16,7 @@
   \***********************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _styles_styles_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles/styles.scss */ \"./assets/styles/styles.scss\");\n\n\n//# sourceURL=webpack://kentec-webpack/./assets/app.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _styles_styles_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles/styles.scss */ \"./assets/styles/styles.scss\");\n\nfetch('http://localhost:8000/create').then(function (response) {\n  return response.json();\n}).then(function (data) {\n  return console.log(data);\n});\n\n//# sourceURL=webpack://kentec-webpack/./assets/app.js?");
 
 /***/ }),
 
