@@ -242,3 +242,48 @@ const ROUTES = [
     ],
 ];
 ```
+# Workflow pour les stagiaires
+On se base sur le repository de Sébastien
+Seul Sébastien fera avancer la branche main
+Seul Sébastien fera avancer la branche dev-seb
+
+Seul Yvan fera avancer la branche dev-yvan
+
+## Groupes stagiaires
+Chaque groupe travaillera sur son propre repository mais après avoir un fait un fork
+Chaque groupe pourra ensuite créer ses branches dans son fork, par exemple : feature/nouvelle-fonctionnalite
+S'ils souhaitent proposer des modifications,  les groupes  pourront faire une Pull Request vers le dépôt de Sébastien
+
+### Pour créer un fork :
+Attention, seuls les "responsables" git de chaque groupe ont besoin de faire un fork.
+
+Se rendre sur le repository de Sébastien
+https://github.com/SebastienThomasDEV/FilRouge
+ et cliquer sur créer un fork (Fork > create a new fork)
+Cela va créer un repository sur votre propre github avec le même nom ex :
+https://github.com/VotreNom/FilRouge
+
+Attention, si vous avez bien cliqué sur "Sync fork", le repository ne sera pas automatiquement mis à jour
+
+### Cloner localement le fork
+
+Créer dans votre arborescence un clone :
+Git clone https://github.com/VotreNom/FilRouge.git
+Aller dans le répertoire créé
+Lier ce repository avec le repository originel (celui de Seb)
+git remote add upstream https://github.com/SebastienThomasDEV/FilRouge
+
+### Récupérer les dernières modifications du dépôt original
+#### Si "Sync fork" a été mis en place, vous pouvez demander via l'interface de github à faire la synchronisation et ensuite il suffit de faire un git pull depuis main
+#### Si "Sync fork" n'a pas été mis en place
+##### 1.git fetch upstream
+
+##### 2. Se placer sur la branche main locale
+git checkout main
+
+##### 3. Fusionner les modifications de upstream/main dans la branche main locale git merge upstream/main
+
+##### 4. Pousser ces modifications vers leur fork sur GitHub
+git push origin main
+
+
