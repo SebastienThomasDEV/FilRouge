@@ -6,7 +6,8 @@
   "scripts": {
     "build": "webpack --mode production",
     "watch": "webpack --watch --mode development",
-    "dev": "webpack --mode development"
+    "dev": "webpack --mode development",
+    "serve": "concurrently \"npm run watch\" \"php -S localhost:8888 -t public\""
   },
   "keywords": [],
   "author": "",
@@ -16,8 +17,10 @@
     "@babel/preset-env": "^7.26.0",
     "@types/node": "^22.10.5",
     "babel-loader": "^9.2.1",
+    "concurrently": "^9.1.0",
     "css-loader": "^7.1.2",
     "file-loader": "^6.2.0",
+    "mini-css-extract-plugin": "^2.9.2",
     "sass": "^1.81.0",
     "sass-loader": "^16.0.3",
     "style-loader": "^4.0.0",

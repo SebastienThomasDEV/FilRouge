@@ -2,16 +2,18 @@
 
 namespace Sthom\App\Model;
 
-class User
-{
-    const TABLE = 'user';
+use Sthom\Kernel\Utils\UserInterface;
 
+class User implements UserInterface
+{
+    const TABLE = "user";
     private ?int $id;
     private ?string $name;
     private ?string $email;
     private ?string $password;
 
-    private ?\DateTimeImmutable $created_at;
+    private ?string $roles;
+
 
     public function getId(): int
     {
@@ -59,6 +61,28 @@ class User
         $this->created_at = $created_at;
     }
 
+    public function setRoles(array $roles): void
+    {
+        // on récupère le tableau et on le sérialise avant insertion dans la base de données
+        $serializedRoles = serialize($roles);
+        $this->roles = $serializedRoles;
+    }
 
+    public function addRole(string $role): void
+    {
+        // on déserialise la chaîne de caractères
+        $roles = unserialize($this->roles);
+        $roles[] = $role;
+        $serializedRoles = serialize($roles);
+        $this->roles = $serializedRoles;
+    }
 
+    public function getRoles(): array
+    {
+        //return unserialize($this->roles);
+
+        $decoded = html_entity_decode($this->roles);
+        $roles = unserialize($decoded);
+        return $roles ?: ['ROLE_USER'];
+    }
 }

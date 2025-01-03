@@ -2,6 +2,8 @@
 
 namespace Sthom\Kernel;
 
+use Sthom\Kernel\Utils\Security;
+
 /**
  * Class Router
  * Cette classe permet de gérer le routage des requêtes HTTP vers les contrôleurs correspondants.
@@ -59,22 +61,6 @@ class Router
              * - Les méthodes HTTP (GET, POST, etc.) peuvent être définies soit comme une chaîne, soit comme un tableau.
              * - On utilise `$_SERVER['REQUEST_METHOD']` pour récupérer la méthode HTTP utilisée par le client.
              */
-            switch (gettype($route['HTTP_METHODS'])) {
-                case 'string':
-                    // Si une seule méthode est autorisée, on vérifie qu'elle correspond à celle utilisée.
-                    if ($_SERVER['REQUEST_METHOD'] !== $route['HTTP_METHODS']) {
-                        throw new \Exception('Method not allowed'); // Erreur si la méthode est invalide
-                    }
-                    break;
-                case 'array':
-                    // Si plusieurs méthodes sont autorisées, on vérifie qu'elles incluent celle utilisée.
-                    if (!in_array($_SERVER['REQUEST_METHOD'], $route['HTTP_METHODS'])) {
-                        throw new \Exception('Method not allowed'); // Erreur si aucune méthode ne correspond
-                    }
-                    break;
-                default:
-                    throw new \Exception('Invalid HTTP_METHODS type'); // Erreur si le type est invalide
-            }
 
             /**
              * Étape 6 : Vérifier si l'URL demandée correspond à la route actuelle.
@@ -85,6 +71,33 @@ class Router
                  * - Le contrôleur est défini par son namespace complet dans le fichier des routes.
                  * - La méthode à appeler est également spécifiée dans le fichier des routes.
                  */
+                switch (gettype($route['HTTP_METHODS'])) {
+                    case 'string':
+                        // Si une seule méthode est autorisée, on vérifie qu'elle correspond à celle utilisée.
+                        if ($_SERVER['REQUEST_METHOD'] !== $route['HTTP_METHODS']) {
+                            throw new \Exception('Method not allowed'); // Erreur si la méthode est invalide
+                        }
+                        break;
+                    case 'array':
+                        // Si plusieurs méthodes sont autorisées, on vérifie qu'elles incluent celle utilisée.
+                        if (!in_array($_SERVER['REQUEST_METHOD'], $route['HTTP_METHODS'])) {
+                            throw new \Exception('Method not allowed'); // Erreur si aucune méthode ne correspond
+                        }
+                        break;
+                    default:
+                        throw new \Exception('Invalid HTTP_METHODS type'); // Erreur si le type est invalide
+                }
+
+                if (isset($route['AUTH'])) {
+                    // Vérifier si l'utilisateur n'est PAS connecté
+                    if (!Security::isConnected()) {
+                        throw new \Exception('Unauthorized'); // L'utilisateur doit être connecté
+                    }
+                    // Si AUTH est un tableau, vérifier les rôles
+                    elseif (is_array($route['AUTH']) && !Security::hasRole($route['AUTH'])) {
+                        throw new \Exception('Forbidden'); // L'utilisateur n'a pas les rôles requis
+                    }
+                }
                 $controller = $_ENV['CONTROLLER_NAMESPACE'] . $route['CONTROLLER'];
                 $method = $route['METHOD'];
 
@@ -106,33 +119,6 @@ class Router
 
                 // Sortir de la boucle une fois la route correspondante trouvée
                 break;
-                /**
-                 * /!\ Attention importante :
-                 * - Le "splat operator" (`...`) déplie un tableau en une liste de valeurs, ce qui permet de passer
-                 *   chaque élément du tableau comme un paramètre distinct à une méthode.
-                 * - Exemple de fonctionnement :
-                 *   Si la query string est `/home?id=1&name=John`, alors :
-                 *   - `$parameters = ['id' => 1, 'name' => 'John']`
-                 *   - `array_values($parameters)` retourne `[1, 'John']`
-                 *   - L'appel `$controllerInstance->$method(...array_values($parameters))` devient
-                 *     `$controllerInstance->index(1, 'John')`.
-                 *
-                 * Cela permet de récupérer automatiquement les paramètres de l'URL dans la méthode du contrôleur.
-                 * Exemple d'une méthode dans `HomeController` :
-                 * ```php
-                 * public function index(int $id, string $name): void {
-                 *     echo "ID: $id, Name: $name";
-                 * }
-                 * ```
-                 * Avec `/home?id=1&name=John`, l'exécution affichera :
-                 * `ID: 1, Name: John`
-                 *
-                 * /!\ Points de vigilance :
-                 * - Assurez-vous que les types des paramètres dans l'URL correspondent à ceux définis dans la méthode.
-                 * - Si des paramètres requis ne sont pas fournis dans l'URL, une erreur sera générée.
-                 * - Exemple : Si `index` attend `$id` et `$name`, mais l'URL omet `$name`,
-                 *   un message d'erreur sera affiché indiquant qu'un argument est manquant.
-                 */
             }
         }
 
