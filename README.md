@@ -242,48 +242,116 @@ const ROUTES = [
     ],
 ];
 ```
-# Workflow pour les stagiaires
-On se base sur le repository de Sébastien
-Seul Sébastien fera avancer la branche main
-Seul Sébastien fera avancer la branche dev-seb
 
-Seul Yvan fera avancer la branche dev-yvan
+# Ajout du TypeScript
+## Rappel
+Tel qu'il a été pensé, le framework permet d'ajouter du js via assets/app.js
 
-## Groupes stagiaires
-Chaque groupe travaillera sur son propre repository mais après avoir un fait un fork
-Chaque groupe pourra ensuite créer ses branches dans son fork, par exemple : feature/nouvelle-fonctionnalite
-S'ils souhaitent proposer des modifications,  les groupes  pourront faire une Pull Request vers le dépôt de Sébastien
+Nous allons voir comment utiliser TypeScript 
+## Installation
+```bash
+npm install --save-dev typescript ts-loader @types/node
+```
+## Ajout de tsconfig.json
+```json
+{
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "sourceMap": true,
+    "strict": true,
+    "module": "es6",
+    "moduleResolution": "node",
+    "target": "es5",
+    "allowJs": true
+  }
+}
+```
+## Modification webpack.config.js 
+```js
 
-### Pour créer un fork :
-Attention, seuls les "responsables" git de chaque groupe ont besoin de faire un fork.
+const path = require('path');
 
-Se rendre sur le repository de Sébastien
-https://github.com/SebastienThomasDEV/FilRouge
- et cliquer sur créer un fork (Fork > create a new fork)
-Cela va créer un repository sur votre propre github avec le même nom ex :
-https://github.com/VotreNom/FilRouge
+module.exports = {
+    entry: './assets/app.ts', // Nouveau point d'entrée en TypeScript
+    output: {
+        filename: 'app.bundle.js',
+        path: path.resolve(__dirname, 'public/build'),
+        publicPath: '/build/',
+    },
+    module: {
+        rules: [
+            {
+                test: /\.tsx?$/, // Ajoute le support de .ts et .tsx
+                use: 'ts-loader',
+                exclude: /node_modules/,
+            },
+            {
+                test: /\.scss$/,
+                use: ['style-loader', 'css-loader', 'sass-loader'],
+            },
+            {
+                test: /\.(png|jpe?g|gif|svg)$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name: '[name].[hash].[ext]',
+                            outputPath: 'images/',
+                        },
+                    },
+                ],
+            },
+        ],
+    },
+    resolve: {
+        extensions: ['.tsx', '.ts', '.js'], // Permet l'import sans extension
+    },
+    mode: 'development',
+};
+```
 
-Attention, si vous avez bien cliqué sur "Sync fork", le repository ne sera pas automatiquement mis à jour
+# Ajout de bootstrap 5
+## Installation
+```bash
+npm i bootstrap@5
+```
 
-### Cloner localement le fork
+## Appel et compilation via app.ts
+```ts
+import "bootstrap/scss/bootstrap.scss";
+import "./styles/styles.scss";
+```
 
-Créer dans votre arborescence un clone :
-Git clone https://github.com/VotreNom/FilRouge.git
-Aller dans le répertoire créé
-Lier ce repository avec le repository originel (celui de Seb)
-git remote add upstream https://github.com/SebastienThomasDEV/FilRouge
+# Utilisation de fetch pour supprimer et ajouter des utilisateurs
+## Routes
+Ajout des routes nécessaires pour :
+ - créer des utilisateurs 
+ - voir les utilisateurs et charger le js
+ - créer un endpoint pour supprimer les utilisateurs
+```php
+"/users" => [
+        "CONTROLLER" => "UsersController",
+        "METHOD" => "index",
+        "HTTP_METHODS" => "GET",
+    ],
+"/api/delete/user" => [
+        "CONTROLLER" => "UsersController",
+        "METHOD" => "deleteApiUser",
+        "HTTP_METHODS" => "GET",
+    ],
+"/api/add/user" => [
+        "CONTROLLER" => "UsersController",
+        "METHOD" => "addApiUser",
+        "HTTP_METHODS" => "POST",
+    ],
+```
+## Contrôleurs
+- deleteApiUser
+- addApiUser
 
-### Récupérer les dernières modifications du dépôt original
-#### Si "Sync fork" a été mis en place, vous pouvez demander via l'interface de github à faire la synchronisation et ensuite il suffit de faire un git pull depuis main
-#### Si "Sync fork" n'a pas été mis en place
-##### 1.git fetch upstream
+## TypeScript
+Dans assets/ts/services/Apis.ts:  contient les méthodes qui permettent de faire appel aux endpoints via fetch
 
-##### 2. Se placer sur la branche main locale
-git checkout main
+Dans assets/ts/viewUser.ts : appel des fonctions (manageDelete et ManageAdd) qui gèrent les événements qui déclencheront l'appel des méthodes du service Api.ts
 
-##### 3. Fusionner les modifications de upstream/main dans la branche main locale git merge upstream/main
-
-##### 4. Pousser ces modifications vers leur fork sur GitHub
-git push origin main
-
-
+Attention, manageAdd et addUserFromApi ne sont pas finies
