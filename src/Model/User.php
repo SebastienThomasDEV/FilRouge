@@ -63,26 +63,22 @@ class User implements UserInterface
 
     public function setRoles(array $roles): void
     {
-        // on récupère le tableau et on le sérialise avant insertion dans la base de données
-        $serializedRoles = serialize($roles);
-        $this->roles = $serializedRoles;
+        // dd(json_encode($roles));
+        $this->roles = json_encode($roles, JSON_THROW_ON_ERROR);
     }
 
     public function addRole(string $role): void
     {
-        // on déserialise la chaîne de caractères
-        $roles = unserialize($this->roles);
-        $roles[] = $role;
-        $serializedRoles = serialize($roles);
-        $this->roles = $serializedRoles;
+        $roles = $this->getRoles();  // Récupérer les rôles actuels
+        if (!in_array($role, $roles)) {
+            $roles[] = $role;  // Ajouter le rôle
+            $this->setRoles($roles);  // Ré-encoder et sauvegarder
+        }
+
     }
 
     public function getRoles(): array
     {
-        //return unserialize($this->roles);
-
-        $decoded = html_entity_decode($this->roles);
-        $roles = unserialize($decoded);
-        return $roles ?: ['ROLE_USER'];
+        return json_decode($this->roles, true) ?: ['ROLE_USER'];
     }
 }

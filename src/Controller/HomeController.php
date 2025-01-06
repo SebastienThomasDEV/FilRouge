@@ -3,18 +3,25 @@
 namespace Sthom\App\Controller;
 
 use Sthom\Kernel\Utils\AbstractController;
+use Sthom\Kernel\Utils\Security;
 
 class HomeController extends AbstractController
 {
-    public final function index(): void
+    final public function index(): void
     {
-        $this->render('home/index.php');
+        if (Security::isConnected()) {
+            $user = $_SESSION['USER'];
+        }
+        $this->render('home/index.php', [
+            'user' => $user,
+        ]);
     }
 
-    public final function create(): void
+    final public function create(): void
     {
         $this->json(['message' => 'create']);
     }
 
 
 }
+

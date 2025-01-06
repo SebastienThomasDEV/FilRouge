@@ -45,7 +45,9 @@ class AuthController extends AbstractController
                 $repo = new Repository(User::class);
                 $user->setName($_POST['name']);
                 $user->setEmail($_POST['email']);
-                $user->setRoles([$_POST['role']]);
+                $role = $_POST['role'] ?? 'ROLE_USER';
+                $user->setRoles([$role]);
+                // dd($user);
                 $hashPassword = password_hash($_POST['password'], PASSWORD_DEFAULT);
                 $user->setPassword($hashPassword);
                 $repo->insert($user);
