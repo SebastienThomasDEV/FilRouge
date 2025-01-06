@@ -1,3 +1,4 @@
+import { User } from "../interfaces/UserInterface";
 export default class Api {
   static loadUsersFromApi() {
     console.log(`dans loadUsersFromApi`);
@@ -29,8 +30,40 @@ export default class Api {
         return data;
       });
   }
-  static addUserFromApi(user): Promise<Object> {
+  static addUserFromApi(user: User): Promise<Object> {
     console.log(`dans addUserFromApi`);
     // On va utiliser la méthode fetch
+    if (!user.name || !user.email || !user.password) {
+      return Promise.reject(
+        new Error("Tous les champs obligatoires doivent être remplis."),
+      );
+    }
+
+    return fetch("/api/add/user", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        name: user.name,
+        email: user.email,
+        password: user.password,
+      }),
+    })
+      .then((response) => {
+        console.log(`Statut de la réponse`, response.status);
+        if (!response.ok) {
+          throw new Error(`Erreur HTTP ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data: User) => {
+        console.log(`Utilisateur créé`, data);
+        return data;
+      })
+      .catch((error) => {
+        console.log(`Erreur attrapée`, error);
+        throw error;
+      });
   }
 }

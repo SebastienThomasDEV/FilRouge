@@ -2,13 +2,14 @@
 
 namespace Sthom\App\Controller;
 
+use Exception;
 use Sthom\App\Model\User;
 use Sthom\Kernel\Utils\AbstractController;
 use Sthom\Kernel\Utils\Repository;
 
 class UsersController extends AbstractController
 {
-    public final function index(): void
+    final public function index(): void
     {
         $userRepo = new Repository(User::class);
         $users = $userRepo->customQuery('SELECT * FROM user');
@@ -56,9 +57,41 @@ class UsersController extends AbstractController
     }
     final public function addApiUser(): void
     {
-        // Récupération de l'utilisateur à ajouter
-        dd($_POST);
+        // On vérifie que la requête est bien de type POST
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            try {
+                // on vérifie que les données ne sont pas vides
+                if (!empty($_POST['name']) || !empty($_POST['email']) || !empty($_POST['password'])) {
+                    // on crée l'instance User
+                    $user = new User();
+                    $repo = new Repository(User::class);
+                    $user->setName($_POST['name']);
+                    $user->setEmail($_POST['email']);
+                    $user->setRoles('ROLE_USER');
+                    $hashPassword = password_hash($_POST['password'], PASSWORD_DEFAULT);
+                    $user->setPassword($hashPassword);
+                    $repo->insert($user);
+                    $this->json([
+                        'success' => true,
+                        'message' => 'Utilisateur crée avec succès.'
+                    ]);
+                } else {
+                    throw new \Exception("Tous les champs obligatoires doivent être renseignés.");
+                }
+            } catch(\Exception $e) {
+                $this->json([
+                    'success'   => false,
+                    'error'     => $e->getMessage(),
+                ]);
+            }
+        } else {
+            $this->json([
+                'success' => false,
+                'error' => 'La méthode HTPP doit être POST'
+            ]);
+        }
+
     }
-    // Le paramètres de $_GET peuvent etre récupérés via les paramètres de la méthode. 
+    // Le paramètres de $_GET peuvent etre récupérés via les paramètres de la méthode.
     // Attention il faudra prochainement utiliser la méthode http DELETE lorsque le mini-framework le permettra
 }

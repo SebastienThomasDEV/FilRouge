@@ -6,7 +6,7 @@ use Sthom\Kernel\Utils\UserInterface;
 
 class User implements UserInterface
 {
-    const TABLE = "user";
+    public const TABLE = "user";
     private ?int $id;
     private ?string $name;
     private ?string $email;

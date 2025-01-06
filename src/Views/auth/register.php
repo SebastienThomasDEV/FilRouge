@@ -9,8 +9,8 @@
       <label for="name" class="form-label">name</label>
       <input type="name" class="form-control" id="name" name="name" required />
 
-      <label for="role" class="form-label">role</label>
-      <input type="role" class="form-control" id="role" name="role" required />
+      <!-- <label for="role" class="form-label">role</label> -->
+      <!-- <input type="role" class="form-control" id="role" name="role" required /> -->
 
       <label for="login" class="form-label">email</label>
       <input type="email" class="form-control" id="login" name="email" required />
