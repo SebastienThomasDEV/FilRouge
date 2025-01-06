@@ -28,3 +28,10 @@
   </section>
 
 </div>
+<!-- Modal de notification -->
+<div class="modal" id="notificationModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); align-items: center; justify-content: center;">
+  <div class="modal-content" style="background: white; padding: 20px; border-radius: 5px; text-align: center; width: 300px;">
+    <p id="modal-message">Notification</p>
+    <button id="close-modal" class="btn btn-primary">Fermer</button>
+  </div>
+</div>

@@ -30,36 +30,16 @@ function manageAdd(formAdd: HTMLFormElement) {
     };
     console.log(`addedUser`, addedUser);
     /* il reste à : 
-          - afficher ce nouvel utilisateur en créant un nouvel élement du dom (section)
-          - Faire appel à un service qui fera une requête http via la fonction fetch avec la méthode post
-        */
+                                                          - afficher ce nouvel utilisateur en créant un nouvel élement du dom (section)
+                                                          - Faire appel à un service qui fera une requête http via la fonction fetch avec la méthode post
+                                                        */
     Api.addUserFromApi(addedUser)
       .then((data) => {
-        // Vérification si l'utilisateur a bien été ajouté
-        if (data) {
-          console.log(`dans le if`, data);
-          // Création d'un nouvel élément DOM pour afficher l'utilisateur
-          const newUserSection = document.createElement("section");
-          newUserSection.setAttribute("data-userid", data.user.id); // Ajoute un ID d'utilisateur
-          newUserSection.textContent = `
-            <h3>${data.user.name}</h3>
-            <p>${data.user.email}</p>
-            <button class="btnDanger">Supprimer</button>
-          `;
-
-          // Ajout de l'élément à la liste des utilisateurs
-          document.querySelector("#userList")?.appendChild(newUserSection);
-
-          // Re-ajouter l'événement de suppression à ce bouton
-          newUserSection
-            .querySelector(".btnDanger")
-            ?.addEventListener("click", manageDelete);
-        } else {
-          console.error("Erreur lors de l'ajout de l'utilisateur");
-        }
+        console.log(`data, `, data);
       })
       .catch((error) => {
-        console.error("Erreur attrapée lors de l'ajout", error);
+        console.error("Erreur attrapée dans viewUser addUser", error);
+        setTimeout(() => {}, 3000);
       });
   });
 }
@@ -80,6 +60,7 @@ function manageDelete(btnDangers: NodeListOf<Element>) {
         if (userId) {
           Api.deleteUserFromApi(userId)
             .then((data) => {
+              console.log(data);
               // Test si la suppression a bien eu lieu
               if ("delete" in data && data.delete == "true") {
                 parentSection.remove();

@@ -10,6 +10,9 @@
         </ul>
     </nav>
     <h1 class="text-center">Home</h1>
-    <p class="text-center">Bienvenue sur la page d'accueil.</p>
+    <p class="text-center">Bienvenue sur la page d'accueil,
+        <?php echo $_SESSION['USER']->getName() ?>
+
+    </p>
 </div>
 

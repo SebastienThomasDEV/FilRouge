@@ -1,4 +1,5 @@
 <?php
+
 const ROUTES = [
     "/" => [
         "CONTROLLER" => "HomeController",
@@ -44,10 +45,10 @@ const ROUTES = [
         "METHOD" => "index",
         "HTTP_METHODS" => "GET",
     ],
-    "/api/delete/user" => [
+    "/api/delete/user/{userId}" => [
         "CONTROLLER" => "UsersController",
         "METHOD" => "deleteApiUser",
-        "HTTP_METHODS" => "GET",
+        "HTTP_METHODS" => "DELETE",
     ],
     "/api/add/user" => [
         "CONTROLLER" => "UsersController",

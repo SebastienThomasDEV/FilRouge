@@ -13,6 +13,7 @@ class AuthController extends AbstractController
     {
 
         if (Security::isConnected()) {
+
             $this->redirect("/");
         } else {
 
@@ -47,6 +48,7 @@ class AuthController extends AbstractController
                 $user->setEmail($_POST['email']);
                 $role = $_POST['role'] ?? 'ROLE_USER';
                 $user->setRoles([$role]);
+                // $user->setRoles(['ROLE_TEST']);
                 // dd($user);
                 $hashPassword = password_hash($_POST['password'], PASSWORD_DEFAULT);
                 $user->setPassword($hashPassword);

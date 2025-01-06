@@ -19,7 +19,9 @@ export default class Api {
   static deleteUserFromApi(userId: string): Promise<Object> {
     console.log(`dans deleteUserFromApi`, userId);
     // On va utiliser la méthode fetch
-    return fetch(`/api/delete/user?id=${userId}`)
+    return fetch(`/api/delete/user/${userId}`, {
+      method: "DELETE",
+    })
       .then((response) => {
         console.log(`statut de la réponse`, response.status);
         return response.json();
@@ -30,7 +32,7 @@ export default class Api {
         return data;
       });
   }
-  static addUserFromApi(user: User): Promise<Object> {
+  static addUserFromApi(user: Omit<User, "id">): Promise<any> {
     console.log(`dans addUserFromApi`);
     // On va utiliser la méthode fetch
     if (!user.name || !user.email || !user.password) {
@@ -38,32 +40,51 @@ export default class Api {
         new Error("Tous les champs obligatoires doivent être remplis."),
       );
     }
-
     return fetch("/api/add/user", {
       method: "POST",
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
+        "Content-Type": "application/json",
       },
-      body: new URLSearchParams({
+      body: JSON.stringify({
         name: user.name,
         email: user.email,
         password: user.password,
       }),
     })
       .then((response) => {
-        console.log(`Statut de la réponse`, response.status);
+        console.log(`Statut de la réponse fetch`, response.status);
         if (!response.ok) {
           throw new Error(`Erreur HTTP ${response.status}`);
         }
         return response.json();
       })
-      .then((data: User) => {
+      .then((data) => {
         console.log(`Utilisateur créé`, data);
-        return data;
+        if (data.success) {
+          showModal("Utilisateur ajouté avec succès !");
+        } else {
+          showModal(`Erreur : ${data.message}`);
+        }
+
+        // location.reload();
       })
       .catch((error) => {
         console.log(`Erreur attrapée`, error);
         throw error;
       });
   }
+}
+
+function showModal(message: string) {
+  const modal = document.getElementById("notificationModal") as HTMLElement;
+  const modalMessage = document.getElementById("modal-message") as HTMLElement;
+  const closeModal = document.getElementById("close-modal") as HTMLElement;
+
+  modalMessage.textContent = message;
+  modal.style.display = "flex";
+
+  closeModal.addEventListener("click", () => {
+    modal.style.display = "none";
+    location.reload();
+  });
 }

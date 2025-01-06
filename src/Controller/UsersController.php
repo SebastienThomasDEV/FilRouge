@@ -44,53 +44,58 @@ class UsersController extends AbstractController
         $this->render('users/dynamicalUsers.php', ["users" => $users]);
     }
 
-    final public function deleteApiUser(): void
+    final public function deleteApiUser(int $userId): void
     {
         // Récupération de l'id de l'élément à supprimer
-        if (isset($_GET["id"])) {
-            $userRepo = new Repository(User::class);
-            $userRepo->delete($_GET["id"]);
+        $userRepo = new Repository(User::class);
+        if($userRepo->getById($userId)) {
+            $userRepo->delete($userId);
             $this->json(["delete" => "true"]);
-        } else {
-            $this->json(["delete" => "false"]);
         }
+        $this->json(["delete" => "false"]);
     }
     final public function addApiUser(): void
     {
         // On vérifie que la requête est bien de type POST
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             try {
-                // on vérifie que les données ne sont pas vides
-                if (!empty($_POST['name']) || !empty($_POST['email']) || !empty($_POST['password'])) {
+                // Lire les données JSON envoyées dans le corps de la requête
+                $data = json_decode(file_get_contents('php://input'), true);
+
+                // On vérifie que les données ne sont pas vides
+                if (!empty($data['name']) && !empty($data['email']) && !empty($data['password'])) {
                     // on crée l'instance User
                     $user = new User();
                     $repo = new Repository(User::class);
-                    $user->setName($_POST['name']);
-                    $user->setEmail($_POST['email']);
-                    $user->setRoles('ROLE_USER');
-                    $hashPassword = password_hash($_POST['password'], PASSWORD_DEFAULT);
+                    $user->setName($data['name']);
+                    $user->setEmail($data['email']);
+                    $user->setRoles(['ROLE_USER']); // Il faut passer un tableau ici
+                    $hashPassword = password_hash($data['password'], PASSWORD_DEFAULT);
                     $user->setPassword($hashPassword);
                     $repo->insert($user);
-                    $this->json([
+
+                    // Répondre avec un succès
+                    echo json_encode([
                         'success' => true,
-                        'message' => 'Utilisateur crée avec succès.'
+                        'message' => 'Utilisateur créé avec succès.'
                     ]);
                 } else {
                     throw new \Exception("Tous les champs obligatoires doivent être renseignés.");
                 }
             } catch(\Exception $e) {
-                $this->json([
+                // En cas d'erreur, renvoyer un message d'erreur
+                echo json_encode([
                     'success'   => false,
                     'error'     => $e->getMessage(),
                 ]);
             }
         } else {
-            $this->json([
+            // Si la méthode n'est pas POST
+            echo json_encode([
                 'success' => false,
-                'error' => 'La méthode HTPP doit être POST'
+                'error' => 'La méthode HTTP doit être POST'
             ]);
         }
-
     }
     // Le paramètres de $_GET peuvent etre récupérés via les paramètres de la méthode.
     // Attention il faudra prochainement utiliser la méthode http DELETE lorsque le mini-framework le permettra
