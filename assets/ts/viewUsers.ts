@@ -12,7 +12,7 @@ if (id) {
   const btnDangers = document.querySelectorAll(".btn-danger");
   manageDelete(btnDangers);
   const btnEdit = document.querySelectorAll(".btn-warning");
-  // manageEdit(btnEdit);
+  manageEdit(btnEdit);
 
   // Gestion de l'ajout d'un utilisateur
   const formAdd = document.querySelector("#form-add-user") as HTMLFormElement;
@@ -67,4 +67,52 @@ function manageDelete(btnDangers: NodeListOf<Element>) {
       }
     });
   });
+}
+function manageEdit(btnEdit: NodeListOf<Element>){
+  btnEdit.forEach((btn) => {
+    btn.addEventListener("click", (event: Event) =>{
+      console.log("click sur btn edit");
+      const parentSection = (event.target as HTMLElement).parentElement;
+      if(!parentSection){
+        return;
+      }
+      const nameElement = parentSection.querySelector("p.name");
+      //const nameElement = parentSection.querySelector("p:nth-child(2)")
+      // const nameElement = parentSection.dataset.username;
+      //const nameElement = parentSection.getAttribute("data-username");
+      const emailElement = parentSection.querySelector("p.email");
+      // const emailElement = parentSection.getAttribute("data-email");
+      const userId = parentSection.getAttribute("data-userid");
+      if (nameElement && emailElement && userId){
+        // je voudrais modifier les balises <p> en input
+        const nameInput = document.createElement("input");
+        nameInput.type = "text";
+        nameInput.value = nameElement.textContent || '';
+
+        const emailInput = document.createElement("input");
+        emailInput.type = "email";
+        emailInput.value = emailElement.textContent || '';
+
+        nameElement.replaceWith(nameInput);
+        emailElement.replaceWith(emailInput);
+
+        // J'ajoute ensuite un bouton pour sauvegarder
+        const saveBtn = document.createElement("button");
+        saveBtn.className = "btn btn-success";
+        saveBtn.textContent = "Enregistrer";
+        parentSection.appendChild(saveBtn);
+
+        saveBtn.addEventListener("click", () => {
+          const newName = nameInput.value;
+          const newEmail = emailInput.value;
+          console.log({
+            id: userId,
+            name: newName,
+            email: newEmail
+          });
+          Api.editUserFromApi({id: userId, name: newName, email: newEmail});
+        });
+      }
+    })
+  })
 }

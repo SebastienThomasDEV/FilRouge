@@ -70,6 +70,48 @@ export default class Api {
         return data;
       });
   }
+
+  static editUserFromApi(user: {
+    id: string;
+    name: string;
+    email: string;
+  }): Promise<any> {
+    console.log('dans editUserFromApi', user);
+    if(!user){
+      return Promise.reject(new Error('Utilisateur inconnu'));
+    }
+    const {id, name, email } = user;
+    return fetch(`api/edit/user/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        name,
+        email,
+      }),
+      headers: {
+        "Content-Type": "application/json"
+      },
+    })
+        .then((response) => {
+          if(response.status == 200){
+            console.log(response.ok);
+            return response.json();
+          }
+          throw new Error(`Erreur HTTP ${response.status}`);
+        })
+        .then((data) => {
+          console.log('Utilisateur crée', data);
+          if(data.success){
+            showModal("Utilisateur modifié avec succès ! ");
+            return data;
+          }else {
+            showModal(`Erreur : ${data.message}`);
+          }
+        })
+        .catch((error) => {
+          console.error(`Erreur attrapée ${error}`);
+        })
+
+  }
 }
 
 function showModal(message: string) {
