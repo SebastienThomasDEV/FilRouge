@@ -287,3 +287,116 @@ git checkout main
 git push origin main
 
 
+
+# Ajout du TypeScript
+## Rappel
+Tel qu'il a été pensé, le framework permet d'ajouter du js via assets/app.js
+
+Nous allons voir comment utiliser TypeScript 
+## Installation
+```bash
+npm install --save-dev typescript ts-loader @types/node
+```
+## Ajout de tsconfig.json
+```json
+{
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "sourceMap": true,
+    "strict": true,
+    "module": "es6",
+    "moduleResolution": "node",
+    "target": "es5",
+    "allowJs": true
+  }
+}
+```
+## Modification webpack.config.js 
+```js
+
+const path = require('path');
+
+module.exports = {
+    entry: './assets/app.ts', // Nouveau point d'entrée en TypeScript
+    output: {
+        filename: 'app.bundle.js',
+        path: path.resolve(__dirname, 'public/build'),
+        publicPath: '/build/',
+    },
+    module: {
+        rules: [
+            {
+                test: /\.tsx?$/, // Ajoute le support de .ts et .tsx
+                use: 'ts-loader',
+                exclude: /node_modules/,
+            },
+            {
+                test: /\.scss$/,
+                use: ['style-loader', 'css-loader', 'sass-loader'],
+            },
+            {
+                test: /\.(png|jpe?g|gif|svg)$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name: '[name].[hash].[ext]',
+                            outputPath: 'images/',
+                        },
+                    },
+                ],
+            },
+        ],
+    },
+    resolve: {
+        extensions: ['.tsx', '.ts', '.js'], // Permet l'import sans extension
+    },
+    mode: 'development',
+};
+```
+
+# Ajout de bootstrap 5
+## Installation
+```bash
+npm i bootstrap@5
+```
+
+## Appel et compilation via app.ts
+```ts
+import "bootstrap/scss/bootstrap.scss";
+import "./styles/styles.scss";
+```
+
+# Utilisation de fetch pour supprimer et ajouter des utilisateurs
+## Routes
+Ajout des routes nécessaires pour :
+ - créer des utilisateurs 
+ - voir les utilisateurs et charger le js
+ - créer un endpoint pour supprimer les utilisateurs
+```php
+"/users" => [
+        "CONTROLLER" => "UsersController",
+        "METHOD" => "index",
+        "HTTP_METHODS" => "GET",
+    ],
+"/api/delete/user" => [
+        "CONTROLLER" => "UsersController",
+        "METHOD" => "deleteApiUser",
+        "HTTP_METHODS" => "GET",
+    ],
+"/api/add/user" => [
+        "CONTROLLER" => "UsersController",
+        "METHOD" => "addApiUser",
+        "HTTP_METHODS" => "POST",
+    ],
+```
+## Contrôleurs
+- deleteApiUser
+- addApiUser
+
+## TypeScript
+Dans assets/ts/services/Apis.ts:  contient les méthodes qui permettent de faire appel aux endpoints via fetch
+
+Dans assets/ts/viewUser.ts : appel des fonctions (manageDelete et ManageAdd) qui gèrent les événements qui déclencheront l'appel des méthodes du service Api.ts
+
+Attention, manageAdd et addUserFromApi ne sont pas finies

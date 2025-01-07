@@ -1,30 +1,25 @@
 const path = require('path');
 
 module.exports = {
-    entry: './assets/app.js', // Point d'entrée principal
+    entry: './assets/app.ts', // Nouveau point d'entrée en TypeScript
     output: {
-        filename: 'app.bundle.js', // Fichier JS généré
-        path: path.resolve(__dirname, 'public/build'), // Chemin de sortie
-        publicPath: '/build/', // Chemin public pour servir les assets
+        filename: 'app.bundle.js',
+        path: path.resolve(__dirname, 'public/build'),
+        publicPath: '/build/',
     },
     module: {
         rules: [
             {
-                test: /\.js$/, // Transpile JavaScript moderne
+                test: /\.tsx?$/, // Ajoute le support de .ts et .tsx
+                use: 'ts-loader',
                 exclude: /node_modules/,
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                        presets: ['@babel/preset-env'],
-                    },
-                },
             },
             {
-                test: /\.scss$/, // Compile SCSS vers CSS
+                test: /\.scss$/,
                 use: ['style-loader', 'css-loader', 'sass-loader'],
             },
             {
-                test: /\.(png|jpe?g|gif|svg)$/, // Gestion des fichiers image
+                test: /\.(png|jpe?g|gif|svg)$/,
                 use: [
                     {
                         loader: 'file-loader',
@@ -37,5 +32,8 @@ module.exports = {
             },
         ],
     },
-    mode: 'development', // Mode par défaut
+    resolve: {
+        extensions: ['.tsx', '.ts', '.js'], // Permet l'import sans extension
+    },
+    mode: 'development',
 };
