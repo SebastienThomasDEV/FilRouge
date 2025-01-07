@@ -90,8 +90,37 @@ class UsersController extends AbstractController
         }
     }
 
-
-
+    public function editApiUser(int $userId): void
+    {
+        if($_SERVER['REQUEST_METHOD'] === 'PATCH'){
+            try {
+                $repo = new Repository(User::class);
+                $user = $repo->getById($userId);
+                if(!$user){
+                    $this->json([
+                       'error' => 'User inconnu',
+                    ]);
+                }
+                $data = json_decode(file_get_contents('php://input'), true);
+                $user->setName($data['name'] ?? $user->getName());
+                $user->setEmail($data['email'] ?? $user->getEmail());
+                $repo->update($user);
+                $this->json([
+                    'success' => true,
+                ]);
+            }catch (\Exception $e){
+                $this->json([
+                    'success' => false,
+                    'message' => $e->getMessage(),
+                ]);
+            }
+        }else {
+            $this->json([
+                'success' => false,
+                'error' => 'La méthode HTTP doit être un PATCH',
+            ]);
+        }
+    }
 
     // Le paramètres de $_GET peuvent etre récupérés via les paramètres de la méthode.
     // Attention il faudra prochainement utiliser la méthode http DELETE lorsque le mini-framework le permettra

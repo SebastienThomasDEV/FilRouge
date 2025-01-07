@@ -14,12 +14,17 @@
     <h2>Liste des utilisateurs</h2>
     <?php if (!empty($users)): ?>
       <?php foreach ($users as $user): ?>
-        <section class="d-flex gap-2 border-1 my-3 align-items-center" data-userid="<?= htmlspecialchars($user['id']) ?>">
+        <section class="d-flex gap-2 border-1 my-3 align-items-center" 
+            data-userid="<?= htmlspecialchars($user['id']) ?>"
+            data-username="<?= htmlspecialchars($user['name']) ?>" 
+            data-email="<?= htmlspecialchars($user['email']) ?>">
           <p><?= htmlspecialchars($user['id']) ?></p>
-          <p><?= htmlspecialchars($user['name']) ?></p>
-          <p><?= htmlspecialchars($user['email']) ?></p>
-          <button class="btn btn-danger">Supprimer</button>
-          <button class="btn btn-warning" id="edit-user">Modifier</button>
+          <p class="name"><?= htmlspecialchars($user['name']) ?></p>
+          <p class="email"><?= htmlspecialchars($user['email']) ?></p>
+            <button class="btn btn-danger">Supprimer</button>
+            <button class="btn btn-warning">Modifer</button>
+
+
 
         </section>
       <?php endforeach; ?>
