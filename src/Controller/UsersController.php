@@ -2,13 +2,14 @@
 
 namespace Sthom\App\Controller;
 
+use Exception;
 use Sthom\App\Model\User;
 use Sthom\Kernel\Utils\AbstractController;
 use Sthom\Kernel\Utils\Repository;
 
 class UsersController extends AbstractController
 {
-    public final function index(): void
+    final public function index(): void
     {
         $userRepo = new Repository(User::class);
         $users = $userRepo->customQuery('SELECT * FROM user');
@@ -43,22 +44,55 @@ class UsersController extends AbstractController
         $this->render('users/dynamicalUsers.php', ["users" => $users]);
     }
 
-    final public function deleteApiUser(): void
+    final public function deleteApiUser(int $userId): void
     {
         // Récupération de l'id de l'élément à supprimer
-        if (isset($_GET["id"])) {
-            $userRepo = new Repository(User::class);
-            $userRepo->delete($_GET["id"]);
+        $userRepo = new Repository(User::class);
+        if($userRepo->getById($userId)) {
+            $userRepo->delete($userId);
             $this->json(["delete" => "true"]);
-        } else {
-            $this->json(["delete" => "false"]);
         }
+        $this->json(["delete" => "false"]);
     }
+
     final public function addApiUser(): void
     {
-        // Récupération de l'utilisateur à ajouter
-        dd($_POST);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            try {
+                $data = json_decode(file_get_contents('php://input'), true);
+                if(!empty($data['name']) && !empty(['email']) && !empty(['password'])) {
+                    $user = new User();
+                    $repo = new Repository(User::class);
+                    $user->setName($data['name']);
+                    $user->setEmail($data['email']);
+                    $user->setRoles(['ROLE_USER']);
+                    $hashPassword = password_hash($data['password'], PASSWORD_DEFAULT);
+                    $user->setPassword($hashPassword);
+                    $repo->insert($user);
+                    $this->json([
+                        'success' => true,
+                        'message' => 'Utilisateur crée avec succès.'
+                    ]);
+                } else {
+                    throw new \Exception("Tous les champs doivent obligatoirement être renseignés");
+                }
+            } catch(\Exception $e) {
+                $this->json([
+                    'success' => false,
+                    'message' => $e->getMessage(),
+                ]);
+            }
+        } else {
+            $this->json([
+                'success' => false,
+                'error' => 'La méthode HTTP doit être un POST',
+            ]);
+        }
     }
-    // Le paramètres de $_GET peuvent etre récupérés via les paramètres de la méthode. 
+
+
+
+
+    // Le paramètres de $_GET peuvent etre récupérés via les paramètres de la méthode.
     // Attention il faudra prochainement utiliser la méthode http DELETE lorsque le mini-framework le permettra
 }

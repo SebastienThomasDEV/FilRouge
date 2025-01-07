@@ -41,7 +41,7 @@ class Repository
      * @param int $id L'identifiant de l'enregistrement à supprimer.
      * @return void
      */
-    public final function delete(int $id): void
+    final public function delete(int $id): void
     {
         // Prépare une requête DELETE à l'aide de SqlBuilder.
         $query = SqlBuilder::prepareDelete($this->table, $id);
@@ -57,7 +57,7 @@ class Repository
      * @param int $id L'identifiant de l'enregistrement à récupérer.
      * @return object|null L'objet du modèle hydraté ou `null` si aucun résultat n'est trouvé.
      */
-    public final function getById(int $id): ?object
+    final public function getById(int $id): ?object
     {
         return $this->getByAttributes(['id' => $id], false);
     }
@@ -67,7 +67,7 @@ class Repository
      *
      * @return array|null Un tableau d'objets hydratés ou `null` si aucun résultat n'est trouvé.
      */
-    public final function getAll(): ?array
+    final public function getAll(): ?array
     {
         return $this->getByAttributes([]);
     }
@@ -79,7 +79,7 @@ class Repository
      * @param bool $all (optionnel) Si `true`, retourne tous les résultats. Sinon, retourne le premier.
      * @return mixed Les résultats sous forme d'objets hydratés ou un seul objet.
      */
-    public final function getByAttributes(array $attributes, bool $all = true): mixed
+    final public function getByAttributes(array $attributes, bool $all = true): mixed
     {
         // Prépare une requête SELECT avec les attributs donnés.
         $query = SqlBuilder::prepareSelect($this->table, $attributes);
@@ -97,7 +97,7 @@ class Repository
      * @param object $entity Une instance du modèle contenant les données à insérer.
      * @return void
      */
-    public final function insert(object $entity): void
+    final public function insert(object $entity): void
     {
         // Prépare une requête INSERT à l'aide de SqlBuilder.
         $query = SqlBuilder::prepareInsert($entity, $this->table);
@@ -114,7 +114,7 @@ class Repository
      * @return void
      * @throws \Exception Si l'entité ne possède pas de clé primaire ou si une erreur survient.
      */
-    public final function update(object $entity): void
+    final public function update(object $entity): void
     {
         // Prépare une requête UPDATE à l'aide de SqlBuilder.
         $query = SqlBuilder::prepareUpdate($entity, $this->table);
@@ -130,7 +130,7 @@ class Repository
      * @param array|null $args (optionnel) Les paramètres à associer à la requête.
      * @return void
      */
-    public final function prepare(?array $args = null): void
+    final public function prepare(?array $args = null): void
     {
         // Nettoie les paramètres pour éviter les injections SQL.
         $args = SqlBuilder::sanitize($args);
@@ -169,7 +169,7 @@ class Repository
         $results = $this->request->fetchAll(\PDO::FETCH_ASSOC);
 
         // Convertit chaque ligne de données en objet du modèle en utilisant `hydrate`.
-        return $isCustom ? $results : array_map(fn($data) => $this->hydrate($data), $results);
+        return $isCustom ? $results : array_map(fn ($data) => $this->hydrate($data), $results);
     }
 
     /**

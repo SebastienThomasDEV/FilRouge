@@ -6,11 +6,13 @@ const id = document.getElementById("dynamical-user");
 
 if (id) {
   console.log(
-    `Dans la page qui contient l'élément qui a pour id dynamical-user`
+    `Dans la page qui contient l'élément qui a pour id dynamical-user`,
   );
   // Gestion du click sur les boutons .btn-danger
   const btnDangers = document.querySelectorAll(".btn-danger");
   manageDelete(btnDangers);
+  const btnEdit = document.querySelectorAll(".btn-warning");
+  // manageEdit(btnEdit);
 
   // Gestion de l'ajout d'un utilisateur
   const formAdd = document.querySelector("#form-add-user") as HTMLFormElement;
@@ -26,13 +28,10 @@ function manageAdd(formAdd: HTMLFormElement) {
     const addedUser = {
       name: formData.get("name") as string,
       email: formData.get("email") as string,
-      pwd: formData.get("pwd") as string,
+      password: formData.get("password") as string,
     };
     console.log(`addedUser`, addedUser);
-    /* il reste à : 
-      - afficher ce nouvel utilisateur en créant un nouvel élement du dom (section)
-      - Faire appel à un service qui fera une requête http via la fonction fetch avec la méthode post
-    */
+    Api.addUserFromApi(addedUser);
   });
 }
 function manageDelete(btnDangers: NodeListOf<Element>) {
@@ -52,6 +51,7 @@ function manageDelete(btnDangers: NodeListOf<Element>) {
         if (userId) {
           Api.deleteUserFromApi(userId)
             .then((data) => {
+              console.log(data);
               // Test si la suppression a bien eu lieu
               if ("delete" in data && data.delete == "true") {
                 parentSection.remove();

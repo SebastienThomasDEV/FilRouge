@@ -2,19 +2,26 @@
 
 namespace Sthom\App\Controller;
 
-use Sthom\App\Model\User;
 use Sthom\Kernel\Utils\AbstractController;
-use Sthom\Kernel\Utils\Repository;
+use Sthom\Kernel\Utils\Security;
 
 class HomeController extends AbstractController
 {
-    public final function index(): void
+    final public function index(): void
     {
-        $userRepo = new Repository(User::class);
-        $user = $userRepo->customQuery('SELECT * FROM user WHERE id = :id', ['id' => 2]);
-        dd($user);
-        $this->render('home/index.php');
+        if (Security::isConnected()) {
+            $user = $_SESSION['USER'];
+        }
+        $this->render('home/index.php', [
+            'user' => $user,
+        ]);
+    }
+
+    final public function create(): void
+    {
+        $this->json(['message' => 'create']);
     }
 
 
 }
+
