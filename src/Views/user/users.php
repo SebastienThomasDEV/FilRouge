@@ -19,6 +19,7 @@
           <p><?= htmlspecialchars($user['name']) ?></p>
           <p><?= htmlspecialchars($user['email']) ?></p>
           <button class="btn btn-danger">Supprimer</button>
+          <button class="btn btn-warning" id="edit-user">Modifier</button>
 
         </section>
       <?php endforeach; ?>

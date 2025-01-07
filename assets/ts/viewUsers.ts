@@ -11,6 +11,8 @@ if (id) {
   // Gestion du click sur les boutons .btn-danger
   const btnDangers = document.querySelectorAll(".btn-danger");
   manageDelete(btnDangers);
+  const btnEdit = document.querySelectorAll(".btn-warning");
+  // manageEdit(btnEdit);
 
   // Gestion de l'ajout d'un utilisateur
   const formAdd = document.querySelector("#form-add-user") as HTMLFormElement;
@@ -29,18 +31,7 @@ function manageAdd(formAdd: HTMLFormElement) {
       password: formData.get("password") as string,
     };
     console.log(`addedUser`, addedUser);
-    /* il reste à : 
-                                                          - afficher ce nouvel utilisateur en créant un nouvel élement du dom (section)
-                                                          - Faire appel à un service qui fera une requête http via la fonction fetch avec la méthode post
-                                                        */
-    Api.addUserFromApi(addedUser)
-      .then((data) => {
-        console.log(`data, `, data);
-      })
-      .catch((error) => {
-        console.error("Erreur attrapée dans viewUser addUser", error);
-        setTimeout(() => {}, 3000);
-      });
+    Api.addUserFromApi(addedUser);
   });
 }
 function manageDelete(btnDangers: NodeListOf<Element>) {

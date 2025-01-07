@@ -16,6 +16,44 @@ export default class Api {
       });
   }
 
+  static addUserFromApi(user: Omit<User, "id">): Promise<void> {
+    console.log(`dans addUserFromApi`);
+    if (!user.name || !user.email || !user.password) {
+      return Promise.reject(
+        new Error("Tous les champs obligatoires doivent être remplis"),
+      );
+    }
+    return fetch("api/add/user", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: user.name,
+        email: user.email,
+        password: user.password,
+      }),
+    })
+      .then((response) => {
+        console.log("Status de la réponse ", response.status);
+        if (!response.ok) {
+          throw new Error(`Erreur HTTP ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log(`Utilisateur crée :`, data);
+        if (data.success) {
+          showModal("Utilisateur ajouté avec succès ! ");
+        } else {
+          showModal(`Erreur : ${data.message}`);
+        }
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  }
+
   static deleteUserFromApi(userId: string): Promise<Object> {
     console.log(`dans deleteUserFromApi`, userId);
     // On va utiliser la méthode fetch
@@ -30,47 +68,6 @@ export default class Api {
       .then((data: { delete: string }) => {
         console.log(`data`, data);
         return data;
-      });
-  }
-  static addUserFromApi(user: Omit<User, "id">): Promise<any> {
-    console.log(`dans addUserFromApi`);
-    // On va utiliser la méthode fetch
-    if (!user.name || !user.email || !user.password) {
-      return Promise.reject(
-        new Error("Tous les champs obligatoires doivent être remplis."),
-      );
-    }
-    return fetch("/api/add/user", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: user.name,
-        email: user.email,
-        password: user.password,
-      }),
-    })
-      .then((response) => {
-        console.log(`Statut de la réponse fetch`, response.status);
-        if (!response.ok) {
-          throw new Error(`Erreur HTTP ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log(`Utilisateur créé`, data);
-        if (data.success) {
-          showModal("Utilisateur ajouté avec succès !");
-        } else {
-          showModal(`Erreur : ${data.message}`);
-        }
-
-        // location.reload();
-      })
-      .catch((error) => {
-        console.log(`Erreur attrapée`, error);
-        throw error;
       });
   }
 }
