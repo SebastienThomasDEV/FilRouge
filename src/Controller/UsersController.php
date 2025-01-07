@@ -37,6 +37,32 @@ class UsersController extends AbstractController
         $this->json($users);
     }
 
+    final public function getApiUser(int $userId): void
+    {
+        if($_SERVER['REQUEST_METHOD'] === 'GET') {
+            try {
+                $userRepo = new Repository(User::class);
+                $user = $userRepo->getById($userId);
+
+                if(!$user) {
+                    throw new Exception("User inconnu");
+                }
+                $this->json([
+                    "user" => $user->toArray()
+                ]);
+            } catch(Exception $e) {
+                $this->json([
+                    "error" => $e->getMessage()
+                ]);
+            }
+        } else {
+            $this->json([
+                'success' => false,
+                "error" => "La méthode HTTP doit être un GET",
+            ]);
+        }
+    }
+
     final public function dynamicalUsers(): void
     {
         $userRepo = new Repository(User::class);
@@ -90,13 +116,13 @@ class UsersController extends AbstractController
         }
     }
 
-    public function editApiUser(int $userId): void
+    final public function editApiUser(int $userId): void
     {
-        if($_SERVER['REQUEST_METHOD'] === 'PATCH'){
+        if($_SERVER['REQUEST_METHOD'] === 'PATCH') {
             try {
                 $repo = new Repository(User::class);
                 $user = $repo->getById($userId);
-                if(!$user){
+                if(!$user) {
                     $this->json([
                        'error' => 'User inconnu',
                     ]);
@@ -108,13 +134,13 @@ class UsersController extends AbstractController
                 $this->json([
                     'success' => true,
                 ]);
-            }catch (\Exception $e){
+            } catch (\Exception $e) {
                 $this->json([
                     'success' => false,
                     'message' => $e->getMessage(),
                 ]);
             }
-        }else {
+        } else {
             $this->json([
                 'success' => false,
                 'error' => 'La méthode HTTP doit être un PATCH',

@@ -13,6 +13,8 @@ if (id) {
   manageDelete(btnDangers);
   const btnEdit = document.querySelectorAll(".btn-warning");
   manageEdit(btnEdit);
+  const btnShow = document.querySelectorAll(".btn-primary");
+  manageShow(btnShow);
 
   // Gestion de l'ajout d'un utilisateur
   const formAdd = document.querySelector("#form-add-user") as HTMLFormElement;
@@ -113,6 +115,23 @@ function manageEdit(btnEdit: NodeListOf<Element>){
           Api.editUserFromApi({id: userId, name: newName, email: newEmail});
         });
       }
+    })
+  })
+}
+
+function manageShow(btnShow: NodeListOf<Element>){
+  btnShow.forEach((btn) => {
+    btn.addEventListener('click', (event: Event) =>{
+      console.log("click sur le btn Voir");
+      const parentSection = (event.target as HTMLElement).parentElement;
+      if(!parentSection){
+        return;
+      }
+      const userId = parentSection.getAttribute("data-userid");
+      if (userId){
+        Api.loadUserFromApi(userId);
+      }
+
     })
   })
 }

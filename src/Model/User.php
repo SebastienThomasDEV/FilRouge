@@ -86,4 +86,14 @@ class User implements UserInterface
         $roles = unserialize($decoded);
         return $roles ?: ['ROLE_USER'];
     }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'email' => $this->email,
+            'roles' => $this->getRoles(),
+        ];
+    }
 }

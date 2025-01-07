@@ -23,6 +23,7 @@
           <p class="email"><?= htmlspecialchars($user['email']) ?></p>
             <button class="btn btn-danger">Supprimer</button>
             <button class="btn btn-warning">Modifer</button>
+            <button class="btn btn-primary">Voir</button>
 
 
 
@@ -38,6 +39,14 @@
 <div class="modal" id="notificationModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); align-items: center; justify-content: center;">
   <div class="modal-content" style="background: white; padding: 20px; border-radius: 5px; text-align: center; width: 300px;">
     <p id="modal-message">Notification</p>
+
+    <div id="modal-user-details" style="display: none;">
+      <h2>Détails Utilisateur</h2>
+      <p><strong>Nom :</strong> <span id="modal-name"></span></p>
+      <p><strong>Email :</strong> <span id="modal-email"></span></p>
+      <p><strong>Roles</strong> <span id="modal-roles"></span></p>
+    </div>
+
     <button id="close-modal" class="btn btn-primary">Fermer</button>
   </div>
 </div>
