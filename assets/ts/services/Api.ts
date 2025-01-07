@@ -16,6 +16,35 @@ export default class Api {
       });
   }
 
+  static loadUserFromApi(userId: string): Promise<void> {
+    console.log("dans loadUserFromApi");
+    return fetch(`/api/user/${userId}`, {
+      method: "GET",
+    })
+      .then((response) => {
+        console.log(response);
+        if (response.status == 200) {
+          return response.json();
+        }
+      })
+      .then((data) => {
+        console.log("data :", data);
+        if (data) {
+          showModal({
+            name: data.user.name,
+            email: data.user.email,
+            roles: data.user.roles,
+          });
+          return data;
+        } else {
+          showModal("User non récupéré");
+        }
+      })
+      .catch((error) => {
+        console.error("Erreur catch :", error);
+      });
+  }
+
   static addUserFromApi(user: Omit<User, "id">): Promise<void> {
     console.log(`dans addUserFromApi`);
     if (!user.name || !user.email || !user.password) {
@@ -76,50 +105,69 @@ export default class Api {
     name: string;
     email: string;
   }): Promise<any> {
-    console.log('dans editUserFromApi', user);
-    if(!user){
-      return Promise.reject(new Error('Utilisateur inconnu'));
+    console.log("dans editUserFromApi", user);
+    if (!user) {
+      return Promise.reject(new Error("Utilisateur inconnu"));
     }
-    const {id, name, email } = user;
+    const { id, name, email } = user;
     return fetch(`api/edit/user/${id}`, {
-      method: 'PATCH',
+      method: "PATCH",
       body: JSON.stringify({
         name,
         email,
       }),
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
     })
-        .then((response) => {
-          if(response.status == 200){
-            console.log(response.ok);
-            return response.json();
-          }
-          throw new Error(`Erreur HTTP ${response.status}`);
-        })
-        .then((data) => {
-          console.log('Utilisateur crée', data);
-          if(data.success){
-            showModal("Utilisateur modifié avec succès ! ");
-            return data;
-          }else {
-            showModal(`Erreur : ${data.message}`);
-          }
-        })
-        .catch((error) => {
-          console.error(`Erreur attrapée ${error}`);
-        })
-
+      .then((response) => {
+        if (response.status == 200) {
+          console.log(response.ok);
+          return response.json();
+        }
+        throw new Error(`Erreur HTTP ${response.status}`);
+      })
+      .then((data) => {
+        console.log("Utilisateur crée", data);
+        if (data.success) {
+          showModal("Utilisateur modifié avec succès ! ");
+          return data;
+        } else {
+          showModal(`Erreur : ${data.message}`);
+        }
+      })
+      .catch((error) => {
+        console.error(`Erreur attrapée ${error}`);
+      });
   }
 }
 
-function showModal(message: string) {
+function showModal(
+  content: string | { name: string; email: string; roles: Array },
+) {
   const modal = document.getElementById("notificationModal") as HTMLElement;
   const modalMessage = document.getElementById("modal-message") as HTMLElement;
+  const modalUserDetails = document.getElementById(
+    "modal-user-details",
+  ) as HTMLElement;
+  const modalName = document.getElementById("modal-name") as HTMLElement;
+  const modalEmail = document.getElementById("modal-email") as HTMLElement;
+  const modalRoles = document.getElementById("modal-roles") as HTMLElement;
   const closeModal = document.getElementById("close-modal") as HTMLElement;
 
-  modalMessage.textContent = message;
+  modalMessage.style.display = "none";
+  modalUserDetails.style.display = "none";
+
+  if (typeof content === "string") {
+    modalMessage.textContent = content;
+    modalMessage.style.display = "block";
+  } else {
+    modalName.textContent = content.name || "Non disponible";
+    modalEmail.textContent = content.email || "Non disponible";
+    modalRoles.textContent = content.roles[0] || "Non disponible";
+    modalUserDetails.style.display = "block";
+  }
+
   modal.style.display = "flex";
 
   closeModal.addEventListener("click", () => {

@@ -60,5 +60,10 @@ const ROUTES = [
         "METHOD" => "editApiUser",
         "HTTP_METHODS" => "PATCH",
     ],
+    "/api/user/{userId}" => [
+        "CONTROLLER" => "UsersController",
+        "METHOD" => "getApiUser",
+        "HTTP_METHODS" => "GET",
+    ],
 
 ];
