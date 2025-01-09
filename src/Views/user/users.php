@@ -10,13 +10,14 @@
     <input type="password" name="password" id="password">
     <button type="submit" class="btn btn-success">Ajouter</button>
   </form>
+    <hr>
   <section class="users-list altern-grey">
     <h2>Liste des utilisateurs</h2>
     <?php if (!empty($users)): ?>
       <?php foreach ($users as $user): ?>
-        <section class="d-flex gap-2 border-1 my-3 align-items-center" 
+        <section class="d-flex gap-2 border-1 my-3 align-items-center"
             data-userid="<?= htmlspecialchars($user['id']) ?>"
-            data-username="<?= htmlspecialchars($user['name']) ?>" 
+            data-username="<?= htmlspecialchars($user['name']) ?>"
             data-email="<?= htmlspecialchars($user['email']) ?>">
           <p><?= htmlspecialchars($user['id']) ?></p>
           <p class="name"><?= htmlspecialchars($user['name']) ?></p>
@@ -24,8 +25,6 @@
             <button class="btn btn-danger">Supprimer</button>
             <button class="btn btn-warning">Modifer</button>
             <button class="btn btn-primary">Voir</button>
-
-
 
         </section>
       <?php endforeach; ?>

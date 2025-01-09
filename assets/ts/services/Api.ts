@@ -1,21 +1,19 @@
 import { User } from "../interfaces/UserInterface";
 export default class Api {
-  static loadUsersFromApi() {
-    console.log(`dans loadUsersFromApi`);
-    // On va utiliser la méthode fetch
-    fetch("/api/users")
-      .then((response) => {
-        console.log(`statut de la réponse`, response.status);
-        return response.json();
-      })
-      .then((data) => {
-        console.log(`data`, data);
-      })
-      .catch((error) => {
-        console.log(`Erreur attrapée `, error);
-      });
-  }
 
+  static async loadUsersFromApi() {
+    try {
+      const response = await fetch("api/users");
+      if(!response.ok){
+        throw new Error(`Erreur lors de la récupération des utilisateurs`);
+      }
+      const data = await response.json();
+      console.log('data ', data);
+      return data;
+    }catch (error) {
+      console.error(`Erreur attrapée : ${error}`);
+    }
+  }
   static loadUserFromApi(userId: string): Promise<void> {
     console.log("dans loadUserFromApi");
     return fetch(`/api/user/${userId}`, {
@@ -95,7 +93,7 @@ export default class Api {
         // Attention, le code côté serveur ne renvoie pas l'information qui permettrait de savoir si l'utilisateur a bien été supprimé
       })
       .then((data: { delete: string }) => {
-        console.log(`data`, data);
+        console.log(`data`, data.delete);
         return data;
       });
   }
@@ -130,6 +128,7 @@ export default class Api {
       .then((data) => {
         console.log("Utilisateur crée", data);
         if (data.success) {
+          console.log('ici, ', data.success);
           showModal("Utilisateur modifié avec succès ! ");
           return data;
         } else {

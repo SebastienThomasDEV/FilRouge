@@ -6,20 +6,74 @@ const id = document.getElementById("dynamical-user");
 
 if (id) {
   console.log(
-    `Dans la page qui contient l'élément qui a pour id dynamical-user`,
+      `Dans la page qui contient l'élément qui a pour id dynamical-user`,
   );
-  // Gestion du click sur les boutons .btn-danger
-  const btnDangers = document.querySelectorAll(".btn-danger");
-  manageDelete(btnDangers);
-  const btnEdit = document.querySelectorAll(".btn-warning");
-  manageEdit(btnEdit);
-  const btnShow = document.querySelectorAll(".btn-primary");
-  manageShow(btnShow);
+
+  Api.loadUsersFromApi()
+      .then((data) =>{
+        console.log("Donnés utilisateurs", data);
+
+        const usersList = document.querySelector(".users-list");
+
+        if(!usersList){
+          console.error("Impossible de trouver l'élément .user-list");
+          return;
+        }
+        usersList.innerHTML = `<h2>Liste des utilisateurs</h2>`;
+        let users = data.users;
+
+        if(users && users.length > 0){
+          users.forEach((user) =>{
+            const userSection = document.createElement("section");
+            userSection.classList.add(
+                "d-flex",
+                "gap-2",
+                "border-1",
+                "my-3",
+                "align-items-center"
+            );
+            userSection.setAttribute("data-userid", user.id);
+            userSection.setAttribute("data-username", user.name);
+            userSection.setAttribute("data-email", user.email);
+
+            userSection.innerHTML = `
+                <p>${user.id}</p>
+                <p class="name">${user.name}</p>
+                <p class="email">${user.email}</p>
+                <button class="btn btn-danger">Supprimer</button>
+                <button class="btn btn-warning">Modifer</button>
+                <button class="btn btn-primary">Voir</button>
+            `;
+            usersList.appendChild(userSection);
+
+            // Gestion du click sur les boutons .btn-danger
+            const btnDangers = document.querySelectorAll(".btn-danger");
+            manageDelete(btnDangers);
+            const btnEdit = document.querySelectorAll(".btn-warning");
+            manageEdit(btnEdit);
+            const btnShow = document.querySelectorAll(".btn-primary");
+            manageShow(btnShow);
+
+
+          });
+        } else {
+          const noUsers = document.createElement("p");
+          noUsers.textContent = "Aucun utilisateur trouvé";
+          usersList.appendChild(noUsers);
+        }
+      })
+      .catch((e) => {
+        console.error(`Erreur attrapée, ${e}`);
+      })
 
   // Gestion de l'ajout d'un utilisateur
   const formAdd = document.querySelector("#form-add-user") as HTMLFormElement;
   manageAdd(formAdd);
+
+
 }
+
+
 function manageAdd(formAdd: HTMLFormElement) {
   formAdd.addEventListener("submit", (event: Event) => {
     // Le formulaire n'envoie pas directement d'information
@@ -131,7 +185,7 @@ function manageShow(btnShow: NodeListOf<Element>){
       if (userId){
         Api.loadUserFromApi(userId);
       }
-
     })
   })
 }
+console.log("fin");

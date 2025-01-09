@@ -45,6 +45,11 @@ const ROUTES = [
         "METHOD" => "index",
         "HTTP_METHODS" => "GET",
     ],
+    "/api/users" => [
+        "CONTROLLER" => "UsersController",
+        "METHOD" => "getApiUsers",
+        "HTTP_METHODS" => "GET",
+    ],
     "/api/delete/user/{userId}" => [
         "CONTROLLER" => "UsersController",
         "METHOD" => "deleteApiUser",
