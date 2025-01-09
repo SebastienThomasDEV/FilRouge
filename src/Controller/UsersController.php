@@ -21,20 +21,43 @@ class UsersController extends AbstractController
      * ! C'est l'ordre des paramètres de la query string qui compte (peut importe la clé)
      * Sinon, on peut utiliser le $_GET pour utiliser les clés de la query string
      */
-    final public function showUser(int $id): void
-    {
-        $userRepo = new Repository(User::class);
-        $user = $userRepo->customQuery('SELECT * FROM user where user.id=:id', ["id" => $id]);
+    //final public function showUser(int $id): void
+    //{
+    //    $userRepo = new Repository(User::class);
+    //    $user = $userRepo->customQuery('SELECT * FROM user where user.id=:id', ["id" => $id]);
 
-        $this->render('user/users.php', ["user" => $user]);
-    }
+    //    $this->render('user/users.php', ["user" => $user]);
+    //}
 
     final public function getApiUsers(): void
     {
-        $userRepo = new Repository(User::class);
-        $users = $userRepo->customQuery('SELECT * FROM user');
-        // Renvoie au format json
-        $this->json($users);
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            try{
+                $userRepo = new Repository(User::class);
+                $users = $userRepo->getAll();
+                if(!$users){
+                    throw new Exception("Users non trouvés");
+                }
+
+                $usersArray = [];
+                foreach($users as $user){
+                    $usersArray[] = $user->toArray();
+                }
+                $this->json([
+                    "users" => $usersArray,
+                ]);
+
+            }catch (Exception $e){
+                $this->json([
+                    "error" => $e->getMessage()
+                ]);
+            }
+        }else {
+            $this->json([
+                "success" => false,
+                "error" => "La méthode HTTP doit être GET",
+            ]);
+        }
     }
 
     final public function getApiUser(int $userId): void
