@@ -6,7 +6,7 @@ use Sthom\Kernel\Security\UserInterface;
 
 class User implements UserInterface
 {
-    const TABLE = "user";
+    public const TABLE = "user";
     private ?int $id;
     private ?string $name;
     private ?string $email;
@@ -21,7 +21,6 @@ class User implements UserInterface
     {
         return $this->id;
     }
-
 
 
     public function getName(): string
@@ -73,5 +72,15 @@ class User implements UserInterface
     public function getRoles(): array
     {
         return json_decode($this->roles, true);
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'email' => $this->email,
+            'roles' => $this->getRoles(),
+        ];
     }
 }

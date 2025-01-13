@@ -45,9 +45,6 @@ DEBUG=true
 
 ## **Utilisation**
 
-### Lancer le serveur PHP et webpack en même temps
-npm run serve
-
 ### **Lancer le serveur PHP**
 Pour démarrer un serveur PHP local, utilisez la commande suivante (à exécuter depuis la racine du projet) :
 ```bash
@@ -288,12 +285,116 @@ git checkout main
 git push origin main
 
 
-12/12/2024 : intervenir sur les classes Security et Repository pour gérer un tableau de roles pour les utilisateurs
-- Ajouter une gestion du type tableaux (recupération & insertion) exclusivement pour la colonne roles de  l'entité User (voir les classes User, Security et Repository)
-! tu peut utiliser la fonction serialize de php pour convertir un tableau en chaine de caractère et unserialize vice versa
-! ou tu peut utiliser la fonction json_encode de php pour convertir un tableau en chaine de caractère et json_decode 
 
-Mise en place de serialize et unserialize dans User.php
-L'ajout d'un utilisateur fonctionne via la route /register. Pour l'instant, je n'ai testé qu'avec les roles "ROLE_USER" et "ROLE_ADMIN"
-Ajout la route logout pour pouvoir faire des tests
-Ajout de la route roleuser et roleadmin pour pouvoir tester si le contrôle des rôles fonctionne bien
+# Ajout du TypeScript
+## Rappel
+Tel qu'il a été pensé, le framework permet d'ajouter du js via assets/app.js
+
+Nous allons voir comment utiliser TypeScript 
+## Installation
+```bash
+npm install --save-dev typescript ts-loader @types/node
+```
+## Ajout de tsconfig.json
+```json
+{
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "sourceMap": true,
+    "strict": true,
+    "module": "es6",
+    "moduleResolution": "node",
+    "target": "es5",
+    "allowJs": true
+  }
+}
+```
+## Modification webpack.config.js 
+```js
+
+const path = require('path');
+
+module.exports = {
+    entry: './assets/app.ts', // Nouveau point d'entrée en TypeScript
+    output: {
+        filename: 'app.bundle.js',
+        path: path.resolve(__dirname, 'public/build'),
+        publicPath: '/build/',
+    },
+    module: {
+        rules: [
+            {
+                test: /\.tsx?$/, // Ajoute le support de .ts et .tsx
+                use: 'ts-loader',
+                exclude: /node_modules/,
+            },
+            {
+                test: /\.scss$/,
+                use: ['style-loader', 'css-loader', 'sass-loader'],
+            },
+            {
+                test: /\.(png|jpe?g|gif|svg)$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name: '[name].[hash].[ext]',
+                            outputPath: 'images/',
+                        },
+                    },
+                ],
+            },
+        ],
+    },
+    resolve: {
+        extensions: ['.tsx', '.ts', '.js'], // Permet l'import sans extension
+    },
+    mode: 'development',
+};
+```
+
+# Ajout de bootstrap 5
+## Installation
+```bash
+npm i bootstrap@5
+```
+
+## Appel et compilation via app.ts
+```ts
+import "bootstrap/scss/bootstrap.scss";
+import "./styles/styles.scss";
+```
+
+# Utilisation de fetch pour supprimer et ajouter des utilisateurs
+## Routes
+Ajout des routes nécessaires pour :
+ - créer des utilisateurs 
+ - voir les utilisateurs et charger le js
+ - créer un endpoint pour supprimer les utilisateurs
+```php
+"/users" => [
+        "CONTROLLER" => "UsersController",
+        "METHOD" => "index",
+        "HTTP_METHODS" => "GET",
+    ],
+"/api/delete/user" => [
+        "CONTROLLER" => "UsersController",
+        "METHOD" => "deleteApiUser",
+        "HTTP_METHODS" => "GET",
+    ],
+"/api/add/user" => [
+        "CONTROLLER" => "UsersController",
+        "METHOD" => "addApiUser",
+        "HTTP_METHODS" => "POST",
+    ],
+```
+## Contrôleurs
+- deleteApiUser
+- addApiUser
+
+## TypeScript
+Dans assets/ts/services/Apis.ts:  contient les méthodes qui permettent de faire appel aux endpoints via fetch
+
+Dans assets/ts/viewUser.ts : appel des fonctions (manageDelete et ManageAdd) qui gèrent les événements qui déclencheront l'appel des méthodes du service Api.ts
+
+Attention, manageAdd et addUserFromApi ne sont pas finies

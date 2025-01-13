@@ -9,13 +9,13 @@
     "dev": "webpack --mode development",
     "serve": "concurrently \"npm run watch\" \"php -S localhost:8888 -t public\""
   },
-
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.26.0",
     "@babel/preset-env": "^7.26.0",
+    "@types/node": "^22.10.5",
     "babel-loader": "^9.2.1",
     "concurrently": "^9.1.0",
     "css-loader": "^7.1.2",
@@ -24,7 +24,12 @@
     "sass": "^1.81.0",
     "sass-loader": "^16.0.3",
     "style-loader": "^4.0.0",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.7.2",
     "webpack": "^5.96.1",
     "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.3"
   }
 }
