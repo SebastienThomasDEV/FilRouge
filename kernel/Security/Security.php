@@ -1,8 +1,8 @@
 <?php
 
-namespace Sthom\Kernel\Utils;
+namespace Sthom\Kernel\Security;
 
-use Sthom\Kernel\Utils\Repository;
+use Sthom\Kernel\Database\AbstractRepository;
 
 /**
  * Class Security

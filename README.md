@@ -51,12 +51,12 @@ npm run serve
 ### **Lancer le serveur PHP**
 Pour démarrer un serveur PHP local, utilisez la commande suivante (à exécuter depuis la racine du projet) :
 ```bash
-php -S localhost:8000 -t public
+php -S localhost:8888 -t public
 ```
 
 Ensuite, ouvrez votre navigateur et accédez à l'application via l'URL suivante :
 ```
-http://localhost:8000
+http://localhost:8888
 ```
 
 ### **Lancer webpack**
@@ -162,9 +162,7 @@ Pour interagir avec la base de données, utilisez la classe `Repository`. Voici 
 
 namespace Sthom\App\Controller;
 
-use Sthom\App\Model\User;
-use Sthom\Kernel\Utils\AbstractController;
-use Sthom\Kernel\Utils\Repository;
+use Sthom\App\Model\User;use Sthom\Kernel\Database\Repository;use Sthom\Kernel\Utils\AbstractController;
 
 class HomeController extends AbstractController
 {

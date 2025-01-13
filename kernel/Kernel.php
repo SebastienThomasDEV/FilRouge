@@ -1,6 +1,8 @@
 <?php
 
 namespace Sthom\Kernel;
+use Sthom\Kernel\Http\Router;
+use Dotenv\Dotenv;
 
 /**
  * Class Kernel
@@ -25,7 +27,7 @@ class Kernel
      */
     public static function boot(): void
     {
-        Configuration::loadConfiguration(); // Charge les variables d'environnement du fichier .env
+        Dotenv::createImmutable(__DIR__ . '/../')->load(); // Charge les variables d'environnement du fichier .env
         Router::dispatch(); // redirige la requête HTTP du client vers le contrôleur correspondant
     }
 
