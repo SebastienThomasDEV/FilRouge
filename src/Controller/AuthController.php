@@ -3,9 +3,9 @@
 namespace Sthom\App\Controller;
 
 use Sthom\App\Model\User;
-use Sthom\Kernel\Utils\AbstractController;
-use Sthom\Kernel\Utils\Repository;
-use Sthom\Kernel\Utils\Security;
+use Sthom\App\Repository\UserRepository;
+use Sthom\Kernel\Http\AbstractController;
+use Sthom\Kernel\Security\Security;
 
 class AuthController extends AbstractController
 {
@@ -43,7 +43,7 @@ class AuthController extends AbstractController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($_POST['password'] === $_POST['confirm_password']) {
                 $user = new User();
-                $repo = new Repository(User::class);
+                $repo = new UserRepository();
                 $user->setName($_POST['name']);
                 $user->setEmail($_POST['email']);
                 $role = $_POST['role'] ?? 'ROLE_USER';

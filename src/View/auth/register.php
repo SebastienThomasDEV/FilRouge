@@ -3,10 +3,10 @@
   <div class="d-flex justify-content-center vh-100 align-items-center">
     <form class="w-50" method="post" action="">
         <label for="firstname" class="form-label">firstname</label>
-        <input type="firstname" class="form-control" id="firstname" name="firstname" required />
+        <input  class="form-control" id="firstname" name="firstname" required />
 
         <label for="name" class="form-label">name</label>
-        <input type="name" class="form-control" id="name" name="name" required />
+        <input class="form-control" id="name" name="name" required />
 
         <label for="login" class="form-label">email</label>
         <input type="email" class="form-control" id="login" name="email" required />

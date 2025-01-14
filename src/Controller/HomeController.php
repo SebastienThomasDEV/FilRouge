@@ -2,8 +2,11 @@
 
 namespace Sthom\App\Controller;
 
-use Sthom\Kernel\Utils\AbstractController;
-use Sthom\Kernel\Utils\Security;
+use Sthom\App\Model\User;
+use Sthom\App\Repository\ClientRepository;
+use Sthom\App\Repository\UserRepository;
+use Sthom\Kernel\Http\AbstractController;
+use Sthom\Kernel\Security\Security;
 
 class HomeController extends AbstractController
 {
@@ -17,11 +20,18 @@ class HomeController extends AbstractController
         ]);
     }
 
-    final public function create(): void
+    public final function show(int $id): void
+    {
+       $repo = new ClientRepository();
+       $repo->findClientByRole();
+
+    }
+
+    final public function jsonExemple(): void
     {
         $this->json(['message' => 'create']);
     }
 
 
-}
 
+}

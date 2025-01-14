@@ -2,7 +2,7 @@
 
 namespace Sthom\App\Model;
 
-use Sthom\Kernel\Utils\UserInterface;
+use Sthom\Kernel\Security\UserInterface;
 
 class User implements UserInterface
 {
@@ -12,7 +12,9 @@ class User implements UserInterface
     private ?string $email;
     private ?string $password;
 
-    private ?string $roles;
+    private ?\DateTimeImmutable $created_at;
+
+    private ?array $roles;
 
 
     public function getId(): int
@@ -63,28 +65,13 @@ class User implements UserInterface
 
     public function setRoles(array $roles): void
     {
-        // on récupère le tableau et on le sérialise avant insertion dans la base de données
-        $serializedRoles = serialize($roles);
-        // dd($serializedRoles);
-        $this->roles = $serializedRoles;
+        $this->roles = $roles;
     }
 
-    public function addRole(string $role): void
-    {
-        // on déserialise la chaîne de caractères
-        $roles = unserialize($this->roles);
-        $roles[] = $role;
-        $serializedRoles = serialize($roles);
-        $this->roles = $serializedRoles;
-    }
 
     public function getRoles(): array
     {
-        //return unserialize($this->roles);
-
-        $decoded = html_entity_decode($this->roles);
-        $roles = unserialize($decoded);
-        return $roles ?: ['ROLE_USER'];
+        return json_decode($this->roles, true);
     }
 
     public function toArray(): array

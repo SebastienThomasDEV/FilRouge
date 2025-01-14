@@ -1,6 +1,6 @@
 <?php
 
-namespace Sthom\Kernel\Utils;
+namespace Sthom\Kernel\Security;
 
 interface UserInterface
 {
