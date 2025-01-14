@@ -4,7 +4,6 @@ namespace Sthom\App\Controller;
 
 use Sthom\App\Model\User;
 use Sthom\Kernel\Http\AbstractController;
-use Sthom\Kernel\Utils\Repository;
 use Sthom\Kernel\Security\Security;
 
 class AuthController extends AbstractController

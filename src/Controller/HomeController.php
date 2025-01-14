@@ -19,18 +19,9 @@ class HomeController extends AbstractController
         ]);
     }
 
-    public final function create(int $id): void
+    public final function show(int $id): void
     {
-        $repo = new UserRepository();
-        $user = $repo->find($id);
-        $user = new User();
-        $user->setName("tactac");
-        $user->setRoles(["ROLE_USER"]);
-        $user->setCreatedAt(new \DateTimeImmutable());
-        $user->setEmail('tactac@mail.com');
-        $user->setPassword('123');
-        $repo->insert($user);
-        dd($user);
+       dd($id);
     }
 
     final public function jsonExemple(): void

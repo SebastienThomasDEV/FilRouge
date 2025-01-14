@@ -12,4 +12,9 @@ class UserRepository extends AbstractRepository
         parent::__construct(User::class);
     }
 
+    public final function test()
+    {
+
+    }
+
 }

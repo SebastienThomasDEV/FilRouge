@@ -176,4 +176,12 @@ abstract class AbstractRepository
 
         return null;
     }
+
+    public final function customQuery(string $sql, ?array $args = null): mixed
+    {
+        $query = new QueryResult($sql, $args);
+        $stmt = $this->connection->prepare($query->getSQL());
+        $stmt->execute($query->getParameters());
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }

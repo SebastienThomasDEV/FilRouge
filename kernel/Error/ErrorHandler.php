@@ -4,7 +4,6 @@ namespace Sthom\Kernel\Error;
 
 class ErrorHandler
 {
-
     public static function handle(): void
     {
         set_error_handler(function ($errno, $errstr, $errfile, $errline) {

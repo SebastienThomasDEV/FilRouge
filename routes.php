@@ -1,7 +1,7 @@
 <?php
 
 const ROUTES = [
-    "/{id}" => [
+    "/" => [
         "CONTROLLER" => "HomeController",
         "METHOD" => "index",
         "HTTP_METHODS" => "GET",
