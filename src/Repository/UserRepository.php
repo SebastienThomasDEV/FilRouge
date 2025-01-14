@@ -12,9 +12,8 @@ class UserRepository extends AbstractRepository
         parent::__construct(User::class);
     }
 
-    public final function test()
+    public function findUserName()
     {
-
+        return $this->customQuery("SELECT * FROM user WHERE name = :name", ['name' => 'Sthom']);
     }
-
 }

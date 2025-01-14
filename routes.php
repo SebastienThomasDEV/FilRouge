@@ -4,7 +4,7 @@ const ROUTES = [
     "/" => [
         "CONTROLLER" => "HomeController",
         "METHOD" => "index",
-        "HTTP_METHODS" => "GET",
+        "HTTP_METHODS" => ["GET", 'POST'],
     ],
     "/users/{id}" => [
         "CONTROLLER" => "HomeController",
